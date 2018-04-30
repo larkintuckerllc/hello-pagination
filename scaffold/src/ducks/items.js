@@ -2,6 +2,22 @@ import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import * as fromItems from '../apis/items';
 
+// SELECTORS
+export const getItemsRequested = state => state.items.requested;
+
+export const getItemsErrored = state => state.items.errored;
+
+export const getItem = (state, id) => state.items.byId[id];
+
+const getItemsById = state => state.items.byId;
+
+const getItemsIds = state => state.items.ids;
+
+export const getItems = createSelector(
+  [getItemsById, getItemsIds],
+  (pById, pIds) => pIds.map(o => pById[o]),
+);
+
 // ACTIONS
 const FETCH_ITEMS_REQUEST = 'FETCH_ITEMS_REQUEST';
 
@@ -97,18 +113,3 @@ export default combineReducers({
   requested,
 });
 
-// SELECTORS
-export const getItemsRequested = state => state.items.requested;
-
-export const getItemsErrored = state => state.items.errored;
-
-export const getItem = (state, id) => state.items.byId[id];
-
-const getItemsById = state => state.items.byId;
-
-const getItemsIds = state => state.items.ids;
-
-export const getItems = createSelector(
-  [getItemsById, getItemsIds],
-  (pById, pIds) => pIds.map(o => pById[o]),
-);

@@ -4,22 +4,48 @@ import ExampleView from './ExampleView';
 
 export default class ExampleControl extends Component {
   componentDidMount() {
-    const { fetchItems } = this.props;
-    fetchItems();
+    const { fetchItems, itemsCurrentPage } = this.props;
+    fetchItems(itemsCurrentPage);
+    this.handleNext = this.handleNext.bind(this);
+    this.handlePrevious = this.handlePrevious.bind(this);
+  }
+  handleNext() {
+    const { fetchItems, itemsCurrentPage } = this.props;
+    fetchItems(itemsCurrentPage + 1);
+  }
+  handlePrevious() {
+    const { fetchItems, itemsCurrentPage } = this.props;
+    fetchItems(itemsCurrentPage - 1);
   }
   render() {
-    const { itemsErrored, items, itemsRequested } = this.props;
+    const {
+      itemsPaged,
+      itemsCurrentPage,
+      itemsErrored,
+      itemsLastPage,
+      itemsRequested,
+    } = this.props;
     if (itemsRequested) return <div>Requested</div>;
     if (itemsErrored) return <div>Errored</div>;
-    return <ExampleView items={items} />;
+    return (
+      <ExampleView
+        onNext={this.handleNext}
+        onPrevious={this.handlePrevious}
+        itemsPaged={itemsPaged}
+        itemsCurrentPage={itemsCurrentPage}
+        itemsLastPage={itemsLastPage}
+      />
+    );
   }
 }
 ExampleControl.propTypes = {
-  itemsErrored: PropTypes.bool.isRequired,
   fetchItems: PropTypes.func.isRequired,
-  items: PropTypes.arrayOf(PropTypes.shape({
+  itemsPaged: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string,
   })).isRequired,
+  itemsCurrentPage: PropTypes.number.isRequired,
+  itemsErrored: PropTypes.bool.isRequired,
+  itemsLastPage: PropTypes.number.isRequired,
   itemsRequested: PropTypes.bool.isRequired,
 };
