@@ -1,0 +1,19 @@
+#items {
+  padding: 0px;
+  margin: 0px;
+  list-style-type: none;
+}
+.item {
+  padding: 30px;
+  font-size: 60px;
+}
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
