@@ -75,10 +75,10 @@ export const fetchItems = page => (dispatch, getState) => {
   const offset = page * PAGE_SIZE;
   dispatch(setItemsCurrentPage(page));
   if (getIsPageFetched(state, page)) {
-    return;
+    return Promise.resolve();
   }
   dispatch(fetchItemsRequest());
-  fromItems.fetchItems({
+  return fromItems.fetchItems({
     limit: PAGE_SIZE,
     offset,
   })

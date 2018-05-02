@@ -3,10 +3,10 @@ import * as fromItems from '../ducks/items';
 import ExampleControl from './ExampleControl';
 
 const mapStateToProps = state => ({
+  items: fromItems.getItems(state),
   itemsCurrentPage: fromItems.getItemsCurrentPage(state),
   itemsErrored: fromItems.getItemsErrored(state),
   itemsLastPage: fromItems.getItemsLastPage(state),
-  itemsPaged: fromItems.getItemsPaged(state),
   itemsRequested: fromItems.getItemsRequested(state),
 });
 

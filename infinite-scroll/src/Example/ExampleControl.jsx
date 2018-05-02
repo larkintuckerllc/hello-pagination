@@ -2,45 +2,67 @@ import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
 import ExampleView from './ExampleView';
 
+const GAP = 150;
 export default class ExampleControl extends Component {
+  constructor(props) {
+    super(props);
+    this.setRootRef = this.setRootRef.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+  }
+
   componentDidMount() {
+    const { handleScroll } = this;
     const { fetchItems, itemsCurrentPage } = this.props;
-    fetchItems(itemsCurrentPage);
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrevious = this.handlePrevious.bind(this);
+    fetchItems(itemsCurrentPage).then(handleScroll);
+    window.addEventListener('scroll', this.handleScroll, false);
   }
-  handleNext() {
-    const { fetchItems, itemsCurrentPage } = this.props;
-    fetchItems(itemsCurrentPage + 1);
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll, false);
   }
-  handlePrevious() {
-    const { fetchItems, itemsCurrentPage } = this.props;
-    fetchItems(itemsCurrentPage - 1);
+
+  setRootRef(element) {
+    this.rootRef = element;
   }
-  render() {
+
+  handleScroll() {
     const {
-      itemsPaged,
+      fetchItems,
       itemsCurrentPage,
-      itemsErrored,
       itemsLastPage,
       itemsRequested,
     } = this.props;
-    if (itemsRequested) return <div>Requested</div>;
+    const { handleScroll, rootRef } = this;
+    const { innerHeight, scrollY } = window;
+    const { offsetTop, scrollHeight } = rootRef;
+    if (
+      innerHeight + scrollY > (offsetTop + scrollHeight) - GAP &&
+      itemsCurrentPage !== itemsLastPage &&
+      !itemsRequested
+    ) {
+      fetchItems(itemsCurrentPage + 1).then(handleScroll);
+    }
+  }
+
+  render() {
+    const {
+      items,
+      itemsErrored,
+    } = this.props;
+    const { setRootRef } = this;
     if (itemsErrored) return <div>Errored</div>;
     return (
-      <ExampleView
-        onNext={this.handleNext}
-        onPrevious={this.handlePrevious}
-        itemsPaged={itemsPaged}
-        itemsCurrentPage={itemsCurrentPage}
-        itemsLastPage={itemsLastPage}
-      />
+      <div ref={setRootRef}>
+        <ExampleView
+          items={items}
+        />
+      </div>
     );
   }
 }
 ExampleControl.propTypes = {
   fetchItems: PropTypes.func.isRequired,
-  itemsPaged: PropTypes.arrayOf(PropTypes.shape({
+  items: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string,
   })).isRequired,
